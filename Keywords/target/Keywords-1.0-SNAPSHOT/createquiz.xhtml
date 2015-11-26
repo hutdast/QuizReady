@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>keywords - #{VM.user.userLogin}</title>
+        </f:facet>
+    </h:head>
+
+
+
+
+
+    <h:body>
+
+        <ui:composition template="template.xhtml">
+
+
+
+            <ui:define name="content-east">
+                <h:form id="menuForm">
+                    <p:commandButton id="dynaButton" value="#{VM.user.userLogin}" type="button" icon="ui-icon-person"/>
+
+                    <p:menu model="#{VM.model}" overlay="true" trigger="dynaButton" my="right top" at="right bottom"/>
+
+                </h:form>
+            </ui:define>
+
+
+
+
+
+
+            <!-- The center layout will create new and edit existing quizzes -->
+
+
+
+            <ui:define name="content-center">
+
+                <h:form id="quizInfo">
+                    <!-- the header info for creating a quiz -->
+                    <p:growl id="msgs" />
+                    <p:panel id="info" header="Quiz Info " >
+
+                        <h:panelGrid columns="5" cellpadding="5">  
+
+                            <h:outputLabel for="category" value="Category:" />                    
+                            <p:inplace id="category" editor="true" emptyLabel="Edit this">
+                                <p:inputText value="#{QM.quiz.category}" required="true"  />
+                            </p:inplace>
+
+                            <h:outputLabel for="title" value="Title:" />
+                            <p:inplace id="title" editor="true" emptyLabel="Edit this">
+                                <p:inputText value="#{QM.quiz.title}" required="true"  />
+                            </p:inplace>
+
+                            <p:commandButton validateClient="true"  id="btn_add" value="Save info" 
+                                             update="quizInfo" oncomplete="#{QM.saveInfo()}"> </p:commandButton>
+
+
+                        </h:panelGrid>
+                    </p:panel>
+
+                </h:form>
+
+
+
+                <!--Question-->
+
+                <h:form id="form2">
+
+                    <p:growl id="msgs" />
+
+
+                    <p:panel id="panel2" toggleable="true" collapsed="true" widgetVar="panel2" header="Create a new question set" >
+
+                        <p:dataTable  value="#{QM.quizs}" var="quiz" id="quizsTable" >
+
+                            <p:column headerText="Question">
+
+
+                                <p:inplace id="ajax2" editor="true">
+                                    <p:inputText value="#{quiz.question}" required="true" label="text" />
+                                </p:inplace>
+                            </p:column>
+
+
+                            <p:column headerText="Keys: ">
+                                <p:inplace id="ajax1" editor="true">
+                                    <p:inputText value="#{quiz.key}" required="true" label="text" />
+                                </p:inplace>
+                            </p:column>
+
+
+
+                        </p:dataTable>
+
+
+
+
+                        <h:panelGrid columns="5" cellpadding="5">
+                            <div class="ui-grid ui-grid-responsive">
+                                <div class="ui-grid-row">
+
+
+                                    <h:outputLabel  value="Sentence: " for="sentence"></h:outputLabel>
+
+
+                                    <p:inputText onfocus="this.value = '';" id="sentence" value="#{QM.quiz.question}"/>
+
+
+                                    <h:outputLabel value="Keys (Separated by commas): " for="keys"></h:outputLabel>
+
+
+                                    <p:inputText title="Seperate them with a comma',' "
+                                                 onfocus="this.value = '';" id="keys" value="#{QM.quiz.key}" />
+
+
+                                    <p:tooltip  for="keys" showEvent="focus" hideEvent="blur" />   
+
+
+                                </div>
+                                <div class="ui-grid-row">
+
+                                    <div class="ui-grid-col-6">
+                                        <p:commandButton id="btn_add" value="Add" process="@this,sentence,keys" update="quizsTable msgs " action="#{QM.reinit()}" >
+                                            <p:collector  value="#{QM.quiz}" addTo="#{QM.quizs}" unique="true"/>
+                                        </p:commandButton>
+                                    </div>
+                                    <div class="ui-grid-col-6">
+                                        <p:commandButton  value="To quiztest" update="form2"  action="#{QM.saveQ()}" 
+                                                          icon="ui-icon-check" > 
+                                        </p:commandButton>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </h:panelGrid>
+                    </p:panel>
+
+                </h:form>
+           
+                
+            </ui:define>
+
+
+        </ui:composition>
+
+
+    </h:body>
+
+</html>
+

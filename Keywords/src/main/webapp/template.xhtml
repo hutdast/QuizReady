@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Keywords - #{VM.user.userLogin}</title>
+             <h:outputStylesheet name="css/jsfcrud.css"/>
+        </f:facet>
+    </h:head>
+
+
+    <h:body >
+        
+        
+ <!-- content -->
+        <ui:insert name="content" >
+        <ui:debug></ui:debug>
+            
+      <p:layout style="min-width:400px;min-height:700px;">
+
+       
+           <p:messages id="msgs1" showDetail="true" autoUpdate="true" closable="true" />
+
+                <div class="ui-grid ui-grid-responsive"><!-- The content-->
+                    
+    <div class="ui-grid-row"><!-- wrap the entire page-->
+        <div class="ui-grid-col-12"> <!-- one page column-->
+     
+            <p:layoutUnit position="north" size="100">
+
+                                <ui:insert name="header" >
+                                  HEADER
+                                </ui:insert>
+
+                            </p:layoutUnit>
+            <div class="ui-grid-row"><!-- Govern the content -->  
+        <div class="ui-grid-col-12"><!-- Row content has one column -->  
+           
+                    <div class="ui-grid-row"><!-- Row content has two columns -->
+
+                        <div class="ui-grid-col-6"><!-- East layout: for user profile and choices  -->
+                            <p:layoutUnit position="east" visible="#{VM.visibility}">
+
+                                <ui:insert name="content-east" >
+                                    East
+                                </ui:insert>
+
+                            </p:layoutUnit>
+                        </div><!-- East layout: for user profile and choices  -->
+
+
+                        <div class="ui-grid-col-6"><!-- Main layout: For all the contents of the user  -->
+                            <p:layoutUnit position="center">
+
+                                <ui:insert name="content-center" >
+                                    Center
+                                </ui:insert>
+
+                            </p:layoutUnit>
+                        </div><!-- Main layout: For all the contents of the user  -->
+
+
+                    </div> <!-- Row content has two columns -->  
+                    
+                     </div><!-- Row content has one column -->  
+    </div><!-- Govern the content --> 
+                    <p:layoutUnit position="south" size="100">
+                        <ui:insert name="footer" >
+                          FOOTER
+                        </ui:insert>
+                    </p:layoutUnit>
+                    
+                       </div><!-- one page column-->
+    </div><!-- wrap the entire page-->
+
+                </div> <!-- The content-->
+                
+                
+                
+
+
+       
+        
+         
+ </p:layout>
+
+ </ui:insert>
+
+        
+        
+          <!-- All the widgets in one place -->
+
+
+                        <ui:insert name="widgets" >
+                             <!-- this is the mail and messages notifications -->
+        <p:dialog position="center"  header="Notifications" widgetVar="notify"  width="425" height="300">
+            <h:outputLabel value="testing"/>
+            
+        </p:dialog>
+        
+         <!-- this is the mail and messages notifications -->
+        <p:dialog  header="Edit profile" widgetVar="profile"  width="425" height="300">
+            <h:outputLabel value="testing"/>
+            
+        </p:dialog>
+            
+             <!-- this is the form for user sign up-->
+        <p:dialog  header="Sign Up Form" widgetVar="dlg1" modal="true" width="425" height="300">
+            <h:form>
+
+                <h:panelGrid id="wg" columns="3" cellpadding="5">
+                    
+                    <h:outputLabel for="name" value="Username:" />                    
+                    <p:inputText id="name" value="#{VM.user.userLogin}" required="true" label="name" />
+                    <p:message for="name" />
+                    
+
+
+                    <h:outputLabel for="pwd1" value="Password : " />
+                    <p:password id="pwd1" value="#{VM.user.passcode}" match="pwd2" label="Password " required="true" feedback="true" 
+                                title="password must 6 characters minimum" />
+
+                    <p:message for="pwd1" />
+                    
+
+
+                    <h:outputLabel for="pwd2" value="re-enter Password : " />
+                    <p:password id="pwd2" value="#{VM.user.passcode}" label="Password 2 " required="true" />
+                    <p:message for="pwd2" />
+                    
+
+                    <h:outputLabel for="email" value="Email: " />
+                    <p:inputText id="email" value="#{VM.user.passcode}" />
+                    <p:message for="email" />
+                    <h:outputText value="#{VM.user.email}" />
+                    
+                </h:panelGrid>
+
+                <p:commandButton value="Create" update="wg" icon="ui-icon-check" validateClient="true"  
+                                 actionListener="#{VM.checkNcreate()}"  onsuccess="PF('dlg1').hide();"/>
+
+                <p:commandButton value="Reset" update="wg" process="@this" type="reset" actionListener="#{VM.reset()}"  />
+
+
+
+            </h:form>     
+        </p:dialog>
+             
+            
+           
+                        </ui:insert>
+                 
+
+
+
+
+      
+
+
+
+    </h:body>
+</html>
