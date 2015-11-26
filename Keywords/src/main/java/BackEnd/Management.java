@@ -54,7 +54,7 @@ public abstract class Management implements Serializable {
      private java.sql.Connection connection;//static class variables it belongs to all objects of that class
     private static final String dbUrl = "jdbc:mysql://127.0.0.1:3306/keywords";
     private static final String dbUsername = "root";
-    private static final String dbPassword = "nikeman12";
+    private static final String dbPassword = "****************";
     private static final String host = "localhost";
     private static final int port = 27017;
     private static final String DB = "mydata";
