@@ -17,14 +17,8 @@ package BackEnd;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import java.util.HashMap;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import java.time.LocalDate;
 import java.util.HashMap;
 import javax.validation.constraints.NotNull;
 
@@ -56,7 +50,9 @@ public class Quiz implements Serializable {
     @NotNull(message = "Cannot leave field empty")
     private String category;
     private String quizDate;
+    @NotNull(message = "Cannot leave field empty")
     private String sentence;
+    @NotNull(message = "Cannot leave field empty")
     private String keys;
     private HashMap<String, String> bundle;
     private ArrayList<String> users;

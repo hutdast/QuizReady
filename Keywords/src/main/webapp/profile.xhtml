@@ -1,60 +1,60 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-
+        
         
         
         <title>keywords - #{VM.user.userLogin}</title>
         <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>
-
+        
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputStylesheet name="js/jsfcrud.js"/>
     </h:head>
-
+    
     <h:body>
-
-
+        
+        
         <ui:composition template="template.xhtml"> <!--template head-->
             <ui:define name="content-east"><!--content-east head-->
                 <h:form id="menuForm">
                     <p:commandButton id="dynaButton" value="#{VM.user.userLogin}" type="button" icon="ui-icon-person"/>
-<!--      MODEL FROM BEAN           -->
+                    <!--      MODEL FROM BEAN           -->
                     <p:menu model="#{VM.model}" overlay="true" trigger="dynaButton" my="right top" at="right bottom"/>
-
+                    
                 </h:form>
             </ui:define><!--content-east tail-->
             
             <ui:define name="content-center"> <!--"content-center" head-->
-
+                
                 <h:form id="formprofile">
                     <!--      ACCORDION PANEL: NEW BEGINS           -->
                     <p:accordionPanel id="quizInfo">
                         <p:tab title="New" titleStyleClass="infobox" titletip="write an exam">
                             <p:panelGrid id="info" columns="4" layout="grid">
                                 <h:outputLabel id="titlelabel" for="title" value="Title: ">
-                                <h:inputText id="title"  value="#{QM.quiz.title}" />
-                              </h:outputLabel>
+                                    <h:inputText id="title"  value="#{QM.quiz.title}" />
+                                </h:outputLabel>
                                 <h:outputLabel id="catlabel" for="category" value="Category: ">
-                                <h:inputText id="category"  value="#{QM.quiz.category}" />
-                              </h:outputLabel>
+                                    <h:inputText id="category"  value="#{QM.quiz.category}" />
+                                </h:outputLabel>
                                 <h:panelGrid columns="2">
                                     <p:selectOneRadio id="privacyRadio" value="#{VM.privacyOption}" tabindex="3" >
-                                    <f:selectItem itemLabel="private" itemValue="private" />
-                                    <f:selectItem itemLabel="public" itemValue="public" />
-    </p:selectOneRadio>
-                                    </h:panelGrid>
+                                        <f:selectItem itemLabel="private" itemValue="private" />
+                                        <f:selectItem itemLabel="public" itemValue="public" />
+                                    </p:selectOneRadio>
+                                </h:panelGrid>
                                 <p:commandButton validateClient="true" value="Begin exam creation"
-                                                 update="formprofile:panelExam" process="@this quizInfo" action="#{QM.saveInfo()}" />
+                                update="formprofile:panelExam" process="@this quizInfo" action="#{QM.saveInfo()}" />
                             </p:panelGrid>
-
+                            
                         </p:tab>
                     </p:accordionPanel>
-<!--      ACCORDION PANEL: EXAMS BEGINS           -->
+                    <!--      ACCORDION PANEL: EXAMS BEGINS           -->
                     <p:accordionPanel id="examDisplay">
                         <p:tab title="Exams" titleStyleClass="infobox" titletip="A list of the exams">
                             <p:tab title="Categories" titleStyleClass="infobox" titletip="Choose a category">
@@ -63,33 +63,32 @@
                                         <p:dataList value="backend bean of exam titles" var="ex">
                                             <p:commandLink >
                                                 <h:outputText value="backend bean exam title"/>
-                                            </p:commandLink>    
-
+                                            </p:commandLink>
+                                            
                                         </p:dataList>
                                     </p:tab>
                                 </p:dataList>
                             </p:tab>
                         </p:tab>
                     </p:accordionPanel>
-
-<!--      EXAM CREATION         -->
+                    
+                    <!--      EXAM CREATION         -->
                     <p:panel id="panelExam" binding="#{VM.p[0]}" style="display: none;"  ><!--exam_creation head-->
                         <p:messages id="msgs1" showDetail="true" closable="true"  />
                         <p:outputPanel id="examOutput">
                             <!--examTable head-->
-                            <p:dataTable id="examTable" var="exam" value="#{QM.quizs}" 
-                                         emptyMessage="You can edit as you create the test"  >
-                               
+                            <p:dataTable id="examTable" var="exam" value="#{QM.quizs}" editable="true"
+                                emptyMessage="You can edit as you create the test"  >
+                                <p:ajax event="rowEdit" listener="#{QM.reinit()}" />
                                 <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="Sentence" />
                                     </f:facet>
                                     <p:inplace>
-                                        <p:inputText value="#{exam.sentence}" />
-                                           
-                                       
+                                        <p:inputText value="#{exam.sentence}"  />
+                                        
                                     </p:inplace>
-                                    </p:column>
+                                </p:column>
                                 
                                 
                                 <p:column>
@@ -102,25 +101,25 @@
                                 </p:column>
                             </p:dataTable>
                             <!--examTable tail-->
-                        </p:outputPanel> 
+                        </p:outputPanel>
                         <p:panelGrid id="examInput" columns="2">
                             
-                             <h:outputLabel value="Sentence : *" for="sentenceInput"></h:outputLabel>
-                             <p:inputText id="sentenceInput" value="#{QM.quiz.sentence}" required="true">
+                            <h:outputLabel value="Sentence : *" for="sentenceInput"></h:outputLabel>
+                            <p:inputText id="sentenceInput" value="#{QM.quiz.sentence}" required="true">
                                 
-                             </p:inputText>
- 
-            <h:outputLabel value="Keys : *" for="keyInput"></h:outputLabel>
-            <p:inputText id="keyInput" value="#{QM.quiz.keys}" required="true">
-               
-            </p:inputText>
- 
-            <p:commandButton id="btn_reset" value="Reset" type="reset"/>
-            <p:commandButton id="btn_add" value="Add"   update="examOutput examInput msgs1 @this" action="#{QM.reinit()}" >
-                <p:collector value="#{QM.quiz}"  addTo="#{QM.quizs}" unique="true" />
-                 
-             
-            </p:commandButton>
+                            </p:inputText>
+                            
+                            <h:outputLabel value="Keys : *" for="keyInput"></h:outputLabel>
+                            <p:inputText id="keyInput" value="#{QM.quiz.keys}" required="true">
+                                
+                            </p:inputText>
+                            
+                            <p:commandButton id="btn_reset" value="Reset" type="reset"/>
+                            <p:commandButton id="btn_add" value="Add"   update="examOutput examInput msgs1 @this" action="#{QM.reinit()}" >
+                                <p:collector value="#{QM.quiz}"  addTo="#{QM.quizs}" unique="true" />
+                                
+                                
+                            </p:commandButton>
                             
                             
                             
@@ -128,17 +127,17 @@
                         
                         
                     </p:panel><!--exam_creation tail-->
-               
-
+                    
+                    
                 </h:form>
                 
-               
-
+                
+                
             </ui:define> <!--"content-center" tail-->
             
-
-
-
+            
+            
+            
         </ui:composition>  <!--template tail-->   
     </h:body>
 </html>

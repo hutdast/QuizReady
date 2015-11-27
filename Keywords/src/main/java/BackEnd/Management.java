@@ -73,13 +73,13 @@ public abstract class Management implements Serializable {
      * Validate the authenticity of the user in the MSQLDB give him/her access
      * into the program.
      *
-     * @param <String> username
-     * @param <String> password
+     * @param ulogin
+     * @param upass
      * @return boolean
      */
     public boolean logNpass(String ulogin, String upass) {
 
-        Statement statement = null;
+        Statement statement;
         boolean isCorrect = false;
         List<String> name;
 
@@ -102,6 +102,7 @@ public abstract class Management implements Serializable {
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Management.class.getName()).log(Level.SEVERE, null, ex);
+             addMessage(null, "DB problem", "cannot log into database" + ex.getMessage());
         }
 
         return isCorrect;
@@ -116,9 +117,9 @@ public abstract class Management implements Serializable {
      * username (log), the newly created password (pass) and the provided email
      * (email).
      *
-     * @param <String> username
-     * @param <String> password
-     * @param <String> email
+     * @param log
+     * @param pass
+     * @param email
      */
     public void createNewUser(String log, String pass, String email) {
 
@@ -143,8 +144,8 @@ public abstract class Management implements Serializable {
     /**
      * Return a list of quizzes that belong to the creator.
      *
-     * @param <String> creator
-     * @return List(QuizManager)
+     * @param creator
+     * @return List(Quiz)
      */
     public List<Quiz> mongoQuery(String creator) {
 
@@ -171,7 +172,7 @@ public abstract class Management implements Serializable {
     /**
      * Return a list of quizzes that belong to the creator.
      *
-     * @param <String> creator
+     * @param id
      * @return List(QuizManager)
      */
     public Quiz mongoQueryQ(String id) {
@@ -203,11 +204,9 @@ public abstract class Management implements Serializable {
      * retrieves the quiz object, saves it then deletes the query. The newly
      * saved item is then updated and stored back into mongoDB.
      *
-     * @param <String> id
-     * @param <String> creator
-     * @param <Quiz> quiz
-     * @param <String> option
      *
+     * @param quiz
+     * @return 
      */
     public String mongoStore(Quiz quiz) {
 
@@ -239,9 +238,9 @@ public abstract class Management implements Serializable {
     /**
      * The error message to call for client side errors
      *
-     * @param <String> component
-     * @param <String> summary
-     * @param <String> detail
+     * @param component
+     * @param summary
+     * @param detail
      */
     public void addMessage(String component, String summary, String detail) {
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
@@ -254,7 +253,8 @@ public abstract class Management implements Serializable {
     /**
      * Check mongoDb if the quiz is already in there
      *
-     * @param <String> component
+     * @param id
+     * @return 
      */
     public boolean checkMongo(String id) {
         boolean isThere;
