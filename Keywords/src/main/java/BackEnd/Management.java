@@ -15,7 +15,6 @@
  */
 package BackEnd;
 
-
 import com.mongodb.MongoClient;
 import java.io.Serializable;
 import java.net.UnknownHostException;
@@ -40,21 +39,26 @@ import org.mongodb.morphia.query.Query;
  * {@link quizproject.UserValidator} and {@link quizproject.ViewChanger}. The
  * following methods are available:<br />
  * <ol>
- * <li>{@link quizproject.Management#createNewUser(String username, String password,String email)} -> Create a new user.</li>
- * <li>{@link quizproject.Management#logNpass(String username,String password)} -> Check if the user is in the database.</li>
- * <li>{@link quizproject.Management#mongoQuery(String creator)} -> Requests a list of all the quizzes created by the user.</li>
- * <li>{@link quizproject.Management#mongoStore(String _id, String creator, Quiz quiz, String option) } -> Stores the new/updated quiz.</li>
- * <li>{@link quizproject.Management#addMessage(String component, String summary, String detail)} -> Generates front end messages.</li>
+ * <li>{@link quizproject.Management#createNewUser(String username, String password,String email)}
+ * -> Create a new user.</li>
+ * <li>{@link quizproject.Management#logNpass(String username,String password)}
+ * -> Check if the user is in the database.</li>
+ * <li>{@link quizproject.Management#mongoQuery(String creator)} -> Requests a
+ * list of all the quizzes created by the user.</li>
+ * <li>{@link quizproject.Management#mongoStore(String _id, String creator, Quiz quiz, String option)
+ * } -> Stores the new/updated quiz.</li>
+ * <li>{@link quizproject.Management#addMessage(String component, String summary, String detail)}
+ * -> Generates front end messages.</li>
  * </ol>
  *
  * @author nikensonmidi
  */
 public abstract class Management implements Serializable {
-    
-     private java.sql.Connection connection;//static class variables it belongs to all objects of that class
+
+    private java.sql.Connection connection;//static class variables it belongs to all objects of that class
     private static final String dbUrl = "jdbc:mysql://127.0.0.1:3306/keywords";
     private static final String dbUsername = "root";
-    private static final String dbPassword = "****************";
+    private static final String dbPassword = "*******************";
     private static final String host = "localhost";
     private static final int port = 27017;
     private static final String DB = "mydata";
@@ -62,7 +66,7 @@ public abstract class Management implements Serializable {
     private Morphia morphia;
     private QuizManager QM;
     private List<QuizManager> QMs;
-    
+
 //******************************** logNpass ***************************************
 //================================================================================= 
     /**
@@ -73,15 +77,15 @@ public abstract class Management implements Serializable {
      * @param <String> password
      * @return boolean
      */
-public boolean logNpass(String ulogin, String upass) {
+    public boolean logNpass(String ulogin, String upass) {
 
         Statement statement = null;
         boolean isCorrect = false;
         List<String> name;
 
         try {
-           
-Class.forName("com.mysql.jdbc.Driver");
+
+            Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
             statement = (Statement) connection.createStatement();
             ResultSet take = statement.executeQuery("call verify('" + ulogin + "', '" + upass + "');");
@@ -96,9 +100,9 @@ Class.forName("com.mysql.jdbc.Driver");
             connection.close();
         } catch (SQLException e) {
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
-        }catch (ClassNotFoundException ex) {
-                Logger.getLogger(Management.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Management.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         return isCorrect;
 
@@ -128,13 +132,12 @@ Class.forName("com.mysql.jdbc.Driver");
         } catch (SQLException e) {
 
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
-        }catch (ClassNotFoundException ex) {
-                Logger.getLogger(Management.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Management.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//end of createNew()
-    
-    
+
 //******************************** mongoQuery()************************************
 //================================================================================= 
     /**
@@ -162,7 +165,7 @@ Class.forName("com.mysql.jdbc.Driver");
         }
 
     }//end of mongoQuery
-    
+
 //******************************** mongoQuery()************************************
 //================================================================================= 
     /**
@@ -178,27 +181,27 @@ Class.forName("com.mysql.jdbc.Driver");
 
             Query query = datastore.createQuery(Quiz.class).field("_id").equal(id);
 
-            Quiz q = (Quiz)query.asList().get(0);
+            Quiz q = (Quiz) query.asList().get(0);
             mongo.close();
-   return q;
-           
+            return q;
+
         } catch (UnknownHostException e) {
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
             return null;
         }
 
     }//end of mongoQuery
-    
+
 //******************************** mongoStore I ***********************************
 //================================================================================= 
     /**
      * Creates a new quiz or updates an existing quiz from mongoDB.<br />
      * _id is the MongoDb id and it is the combination of creator+quiz
      * title.<br />
-     * The <b>option</b> can be <b>new</b> or <b>update</b>. The <b>new</b> sets a
-     * new id, the creator name and the quiz object. The <b>update</b> retrieves
-     * the quiz object, saves it then deletes the query. The newly saved item is then updated and
-     * stored back into mongoDB.
+     * The <b>option</b> can be <b>new</b> or <b>update</b>. The <b>new</b> sets
+     * a new id, the creator name and the quiz object. The <b>update</b>
+     * retrieves the quiz object, saves it then deletes the query. The newly
+     * saved item is then updated and stored back into mongoDB.
      *
      * @param <String> id
      * @param <String> creator
@@ -206,7 +209,7 @@ Class.forName("com.mysql.jdbc.Driver");
      * @param <String> option
      *
      */
-    public String mongoStore( Quiz quiz) {
+    public String mongoStore(Quiz quiz) {
 
         try {
 
@@ -215,9 +218,9 @@ Class.forName("com.mysql.jdbc.Driver");
             morphia.mapPackage("quizproject");//map to the index of the entity
             Datastore datastore = morphia.createDatastore(mongo, DB);
             datastore.ensureIndexes();
-           
-  datastore.save(quiz);
-          
+
+            datastore.save(quiz);
+
             mongo.close();
             return "success";
 
@@ -230,7 +233,7 @@ Class.forName("com.mysql.jdbc.Driver");
 
         }
     }//end of mongoStore
-    
+
 //******************************** addMessage *************************************
 //================================================================================= 
     /**
@@ -245,7 +248,7 @@ Class.forName("com.mysql.jdbc.Driver");
         FacesContext.getCurrentInstance().addMessage(component, message);
 
     }// end of addMessage 
-    
+
 //******************************** addMessage *************************************
 //================================================================================= 
     /**
@@ -253,9 +256,10 @@ Class.forName("com.mysql.jdbc.Driver");
      *
      * @param <String> component
      */
-    public boolean checkMongo(String id){
-        boolean isThere = true;
-         try {
+    public boolean checkMongo(String id) {
+        boolean isThere;
+        try {
+
             mongo = new MongoClient(host, port);
             Datastore datastore = new Morphia().createDatastore(mongo, DB);
 
@@ -263,16 +267,16 @@ Class.forName("com.mysql.jdbc.Driver");
 
             List<Quiz> q = query.asList();
             mongo.close();
-     isThere = q.parallelStream()
-        .anyMatch(e ->(e.getId() == null ? id == null : e.getId().equals(id)));
-           return isThere;
+            isThere = q.parallelStream()
+                    .anyMatch(e -> (e.getId() == null ? id == null : e.getId().equals(id)));
+            return isThere;
 
         } catch (UnknownHostException e) {
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
             isThere = false;
             return isThere;
         }
-        
+
     }//end of checkMongo
-    
+
 }//end of class

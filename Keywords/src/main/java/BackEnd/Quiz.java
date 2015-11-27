@@ -25,66 +25,65 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import java.time.LocalDate;
-import java.util.Hashtable;
+import java.util.HashMap;
 import javax.validation.constraints.NotNull;
+
 /**
- *Quiz is a simple POJO (Plain Old Java Object).
- *Quiz is the entity that represent quiz from the databases.
- * The following methods are available:<br />
+ * Quiz is a simple POJO (Plain Old Java Object). Quiz is the entity that
+ * represent quiz from the databases. The following methods are available:<br />
  * <ol>
- *  <li>Quiz(String title) -> Constructor</li>
- *  <li>equals(Object obj) -> To compare with another quiz object</li>
- * <li>toString() -> String literal of the object</li> 
+ * <li>Quiz(String title) -> Constructor</li>
+ * <li>equals(Object obj) -> To compare with another quiz object</li>
+ * <li>toString() -> String literal of the object</li>
  *
  * </ol>
+ *
  * @author nikensonmidi
  */
 @Entity
-public class Quiz implements Serializable{
-    
+public class Quiz implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
     private String _id;
     private String author;
     @NotNull(message = "Cannot leave field empty")
     private String title;
 
-private String question;
+    private String question;
     private String answer;
     @NotNull(message = "Cannot leave field empty")
     private String category;
     private String quizDate;
     private String sentence;
-        private String keys;
-        private Hashtable<String, String> bundle;
+    private String keys;
+    private HashMap<String, String> bundle;
     private ArrayList<String> users;
     private ArrayList<String> possible_answers;
-    
 
 //******************************** Constructors ***********************************
 //================================================================================= 
     public Quiz() {
-}
+    }
 
     public Quiz(String title) {
         this.title = title;
-    
-       
-    }
-  
 
-  
+    }
+
+    public Quiz(String sentence, String keys) {
+        this.sentence = sentence;
+        this.keys = keys;
+    }
 
 //******************************** Getters and Setters ****************************
 //=================================================================================
-      public String getSentence() {
+    public String getSentence() {
         return sentence;
     }
 
-    public void setSentence(String Sentence) {   
+    public void setSentence(String Sentence) {
         this.sentence = Sentence;
     }
 
@@ -96,10 +95,11 @@ private String question;
         this.keys = keys;
     }
 
-    public Hashtable<String, String> getBundle() {
+    public HashMap<String, String> getBundle() {
         return bundle;
     }
-    public void setBundle(Hashtable<String, String> bundle) {  
+
+    public void setBundle(HashMap<String, String> bundle) {
         this.bundle = bundle;
     }
 
@@ -134,10 +134,6 @@ private String question;
     public void setQuestion(String question) {
         this.question = question;
     }
-
-    
-
-   
 
     public ArrayList<String> getUsers() {
         return users;
@@ -180,9 +176,6 @@ private String question;
         this.author = author;
     }
 
-  
-    
-
 //********************************  equals(Object obj) ****************************
 //=================================================================================     
     /**
@@ -190,7 +183,6 @@ private String question;
      * the front end to work.
      *
      */
-  
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Quiz)) {
@@ -205,7 +197,6 @@ private String question;
 
 //********************************  hashCode() ************************************
 //=================================================================================  
- 
     @Override
     public int hashCode() {
         int hash = 1;
@@ -223,12 +214,9 @@ private String question;
 
 //********************************  toString() ************************************
 //=================================================================================      
-   
     @Override
     public String toString() {
         return "quizproject.quizproject.Quiz[ id=" + _id + " ]";
     }
-    
-    
-    
+
 }// end of class
