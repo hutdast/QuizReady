@@ -6,14 +6,18 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
+
+        
+        
         <title>keywords - #{VM.user.userLogin}</title>
-        <script> src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>
+        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>
 
         <h:outputStylesheet name="css/jsfcrud.css"/>
         <h:outputStylesheet name="js/jsfcrud.js"/>
     </h:head>
 
     <h:body>
+
 
         <ui:composition template="template.xhtml"> <!--template head-->
             <ui:define name="content-east"><!--content-east head-->
@@ -70,9 +74,11 @@
 
 <!--      EXAM CREATION         -->
                     <p:panel id="panelExam" binding="#{VM.p[0]}" style="display: none;"  ><!--exam_creation head-->
+                        <p:messages id="msgs1" showDetail="true" closable="true"  />
                         <p:outputPanel id="examOutput">
                             <!--examTable head-->
-                            <p:dataTable id="examTable" var="exam" value="#{QM.quizs}" editable="true" >
+                            <p:dataTable id="examTable" var="exam" value="#{QM.quizs}" 
+                                         emptyMessage="You can edit as you create the test"  >
                                
                                 <p:column>
                                     <f:facet name="header">
@@ -80,6 +86,8 @@
                                     </f:facet>
                                     <p:inplace>
                                         <p:inputText value="#{exam.sentence}" />
+                                           
+                                       
                                     </p:inplace>
                                     </p:column>
                                 
@@ -98,14 +106,20 @@
                         <p:panelGrid id="examInput" columns="2">
                             
                              <h:outputLabel value="Sentence : *" for="sentenceInput"></h:outputLabel>
-                             <p:inputText id="sentenceInput" value="#{QM.quiz.sentence}" required="true"/>
+                             <p:inputText id="sentenceInput" value="#{QM.quiz.sentence}" required="true">
+                                
+                             </p:inputText>
  
             <h:outputLabel value="Keys : *" for="keyInput"></h:outputLabel>
-            <p:inputText id="keyInput" value="#{QM.quiz.keys}" required="true"/>
+            <p:inputText id="keyInput" value="#{QM.quiz.keys}" required="true">
+               
+            </p:inputText>
  
             <p:commandButton id="btn_reset" value="Reset" type="reset"/>
             <p:commandButton id="btn_add" value="Add"   update="examOutput examInput msgs1 @this" action="#{QM.reinit()}" >
                 <p:collector value="#{QM.quiz}"  addTo="#{QM.quizs}" unique="true" />
+                 
+             
             </p:commandButton>
                             
                             

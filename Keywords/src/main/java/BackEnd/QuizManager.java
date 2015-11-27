@@ -15,6 +15,7 @@
  */
 package BackEnd;
 
+import javax.faces.event.ActionEvent;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -75,11 +77,6 @@ import javax.faces.context.FacesContext;
 public final class QuizManager extends Management implements Serializable {
 
     /**
-     * id for the quiz ent
-     */
-   
-    String author;
-    /**
      * Injecting Viewmanger in order to access QuizManager
      */
     @ManagedProperty(value = "#{VM}")
@@ -93,10 +90,7 @@ public final class QuizManager extends Management implements Serializable {
      * entry.
      */
     private List<Quiz> quizs;
-    /**
-     * This list of quizzes save the question info and store it into MongoDB.
-     */
-    private Hashtable<String, String> temp;
+
     /**
      * Supplementary properties for quiz management however cannot be part of
      * QuizManager database entries.
@@ -104,42 +98,36 @@ public final class QuizManager extends Management implements Serializable {
     private Supplement supplement;
     private Random i;
 
+    private  Hashtable<String, String> temp;
+   
 //******************************** Constructors and initiations********************
 //================================================================================= 
+
     public QuizManager() {
 
     }
 
     @PostConstruct
     public void init() {
- //author = getVm().getUser().getUserLogin();
- author="example";
+  quiz = new Quiz();
+        quizs = new ArrayList<>();
+      
 temp = new Hashtable<>();
-        quiz = new Quiz();
-       quizs = new ArrayList<>();
-
     }
     
-      public void createNew() {
-        if(quizs.contains(quiz)) {
-            FacesMessage msg = new FacesMessage("Dublicated", "This book has already been added");
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-        } 
-        else {
-           mongoStore( quiz);
-            quizs.add(quiz); 
-            
-            quiz = new Quiz();
-        }
-    }
-     
+  
+
     public String reinit() {
-      
+        //saveQ();
+        System.out.println(" reinit is invoked and quiz key is "+quiz.getKeys());
+if(quiz.getKeys() != null || quiz.getSentence() !=null){
+    saveQ(quiz.getSentence(),quiz.getKeys());
+}
         quiz = new Quiz();
-         
+
         return null;
     }
-    
+
 //******************************** Getters and setters ****************************
     //================================================================================= 
     public Quiz getQuiz() {
@@ -167,17 +155,6 @@ temp = new Hashtable<>();
     }
 
   
-
-    public String getAuthor() {
-       
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-  
    
 //******************************** saveInfo() *************************************
 //================================================================================= 
@@ -188,37 +165,35 @@ temp = new Hashtable<>();
      * @return String
      */
     public String saveInfo() {
-  
-        if (quiz.getCategory() != null && quiz.getTitle() != null ) {
-         
+        String author = getVm().getUser().getUserLogin();
+        if (quiz.getCategory() != null && quiz.getTitle() != null) {
+
             String title = formatTitle(quiz.getTitle());
-           String id = author + title;
- quiz.setId(id);
+            String id = author + title + quiz.getCategory();
+            quiz.setId(id);
             quiz.setAuthor(author);
             quiz.setTitle(quiz.getTitle());
             quiz.setCategory(quiz.getCategory());
             quiz.setQuizDate(LocalDate.now().toString());
-          
-            if ("success".equals(mongoStore(quiz)) && !checkMongo(id) ) {
-               
-               
+
+            if ("success".equals(mongoStore(quiz)) && !checkMongo(id)) {
+
                 getVm().getP()[0].setRendered(true);
                 getVm().getP()[0].setStyle("display: block;");
                 return null;
-            } else if(checkMongo(id)) {
+            } else if (checkMongo(id)) {
                 addMessage("msgs1", " Exam name already exist in your folder",
                         "Failed!");
-                
-                 quiz = mongoQuery(author).stream()
-                         .filter((Quiz e) -> e.getId().equals(id))
-                         .findFirst()
-                         .get();
-                 getVm().getP()[0].setRendered(true);
+
+                quiz = mongoQuery(author).stream()
+                        .filter((Quiz e) -> e.getId().equals(id))
+                        .findFirst()
+                        .get();
+                getVm().getP()[0].setRendered(true);
                 getVm().getP()[0].setStyle("display: block;");
-               
-               
+
                 return null;
-            }else{
+            } else {
                 addMessage("msgs1", " Database problems",
                         "Failed!");
                 return null;
@@ -227,7 +202,7 @@ temp = new Hashtable<>();
         } else {
             addMessage("msgs1", " Title and category need to be filled out",
                     "Failed!");
-return null;
+            return null;
         }
 
     }
@@ -236,41 +211,28 @@ return null;
 
     /**
      * saveQ() saves the question set into the mongoDB.
-     *
-     * @return String
+     * @param sentence
+     * @param keys
      */
-    public String saveQ(Quiz q) {
-       
-         System.out.println("saveQ() is invoked anc catch this sentence: "+ q.getSentence());
-       String sentence = q.getSentence();
-       String keys = q.getKeys();
-                 
+    public void saveQ(String sentence, String keys) {
 
-       Hashtable<String, String> temp = new Hashtable<>();
-       if(!keys.equals(null) || !sentence.equals(null)){
-            for (String key :keys.split(",")) {
-            if (!sentence.contains(key.trim())) {
+            for (String key : keys.split(",")) {
+                if (!sentence.contains(key.trim())) {
+                    addMessage("msgs1", " Check keys: " + keys, " there is a key that is not in the sentence ");
 
-                addMessage("msgs1", " Check the keys", " there is a key that is not in the sentence ");
-                return null;
-            }else{
-                temp.put(sentence, keys);
-                         
-            }
-        }//end for loop
-       }
-       
+                } else {
 
-     System.out.println("q caught mongoQuery and it's id is: "+q.getId());
-q.setBundle(temp);
-        quiz.setSentence(null);//interference with mongo entry--empty quiz object before saving
-        quiz.setKeys(null);//interference with mongo entry--empty quiz object before saving
- mongoStore(q);
-        return null;
+                    temp.put(sentence, keys);
+                    quiz.setId(purgeQuiz().getId()); //reseting the id to preserve state
+                    quiz.setBundle(temp);
+                    mongoStore(quiz);
+
+                }
+            }//end for loop String key
+  
 
     }
-    
-    
+
 //******************************** purgeQuiz()*************************************
 //================================================================================= 
     /**
@@ -315,10 +277,12 @@ q.setBundle(temp);
      */
     public Object[] questionGen() {
         i = new Random();
-      Hashtable<String, String> bundle = quiz.getBundle();
+        String author = getVm().getUser().getUserLogin();
+        Hashtable<String, String> bundle = quiz.getBundle();
         //author = vm.getUser().getUserLogin();
+        String id = author + quiz.getTitle() + quiz.getCategory();
         quiz = mongoQuery(author).stream()
-                .filter(e -> e.getId().equals(author + quiz.getTitle()))//get it from list
+                .filter(e -> e.getId().equals(id))//get it from list
 
                 .findFirst()
                 .orElse(new Quiz());
@@ -399,7 +363,6 @@ q.setBundle(temp);
      * @param <String> title
      * @return List(quiz)
      */
-
     public List<Quiz> multiple_listGen(int amount, String title) {
         quiz.setTitle(title);
         Object[] temp;
@@ -457,12 +420,11 @@ q.setBundle(temp);
      *
      */
     public List<String> getQuizTitles(String creator) {
-
+        String author = getVm().getUser().getUserLogin();
         List<String> titles = mongoQuery(author).stream()
-                                                .map(e ->e.getTitle())
-                                                .collect(Collectors.toList());
-                
-                
+                .map(e -> e.getTitle())
+                .collect(Collectors.toList());
+
         return titles;
 
     }
