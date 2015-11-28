@@ -36,15 +36,15 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 public class Quiz implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     private String _id;
     private String author;
     @NotNull(message = "Cannot leave field empty")
     private String title;
-
+    
     private String question;
     private String answer;
     @NotNull(message = "Cannot leave field empty")
@@ -57,123 +57,126 @@ public class Quiz implements Serializable {
     private HashMap<String, String> bundle;
     private ArrayList<String> users;
     private ArrayList<String> possible_answers;
-
-//******************************** Constructors ***********************************
-//================================================================================= 
+    
+    //******************************** Constructors ***********************************
+    //=================================================================================
     public Quiz() {
     }
-
+    
     public Quiz(String title) {
         this.title = title;
-
+        
     }
-
-    public Quiz(String sentence, String keys) {
+    
+    public Quiz(String _id, String sentence, String keys) {
+        this._id = _id;
         this.sentence = sentence;
         this.keys = keys;
     }
-
-//******************************** Getters and Setters ****************************
-//=================================================================================
+    
+    
+    
+    //******************************** Getters and Setters ****************************
+    //=================================================================================
     public String getSentence() {
         return sentence;
     }
-
+    
     public void setSentence(String Sentence) {
         this.sentence = Sentence;
     }
-
+    
     public String getKeys() {
         return keys;
     }
-
+    
     public void setKeys(String keys) {
         this.keys = keys;
     }
-
+    
     public HashMap<String, String> getBundle() {
         return bundle;
     }
-
+    
     public void setBundle(HashMap<String, String> bundle) {
         this.bundle = bundle;
     }
-
+    
     public String getTitle() {
         return title;
     }
-
+    
     public void setTitle(String title) {
         this.title = title;
     }
-
+    
     public String getCategory() {
         return category;
     }
-
+    
     public void setCategory(String category) {
         this.category = category;
     }
-
+    
     public String getQuizDate() {
         return quizDate;
     }
-
+    
     public void setQuizDate(String quizDate) {
         this.quizDate = quizDate;
     }
-
+    
     public String getQuestion() {
         return question;
     }
-
+    
     public void setQuestion(String question) {
         this.question = question;
     }
-
+    
     public ArrayList<String> getUsers() {
         return users;
     }
-
+    
     public void setUsers(ArrayList<String> users) {
         this.users = users;
     }
-
+    
     public String getAnswer() {
         return answer;
     }
-
+    
     public void setAnswer(String answer) {
         this.answer = answer;
     }
-
+    
     public ArrayList<String> getPossible_answers() {
-
+        
         return possible_answers;
     }
-
+    
     public void setPossible_answers(ArrayList<String> possible_answers) {
         this.possible_answers = possible_answers;
     }
-
+    
     public String getId() {
         return _id;
     }
-
+    
     public void setId(String _id) {
         this._id = _id;
     }
-
+    
     public String getAuthor() {
         return author;
     }
-
+    
     public void setAuthor(String author) {
         this.author = author;
     }
-
-//********************************  equals(Object obj) ****************************
-//=================================================================================     
+    
+    //********************************  equals(Object obj) ****************************
+    //=================================================================================
     /**
      * the equal and the hash have to be tailored in order for the datatable in
      * the front end to work.
@@ -184,35 +187,35 @@ public class Quiz implements Serializable {
         if (!(obj instanceof Quiz)) {
             return false;
         }
-
+        
         Quiz quiz = (Quiz) obj;
-
+        
         return (quiz.getKeys() != null && quiz.getKeys().equals(keys))
-                && (quiz.getQuestion() != null && quiz.getQuestion().equals(question));
+        && (quiz.getQuestion() != null && quiz.getQuestion().equals(question));
     }
-
-//********************************  hashCode() ************************************
-//=================================================================================  
+    
+    //********************************  hashCode() ************************************
+    //=================================================================================
     @Override
     public int hashCode() {
         int hash = 1;
-
+        
         if (keys != null) {
             hash = hash * 31 + keys.hashCode();
         }
-
+        
         if (question != null) {
             hash = hash * 29 + question.hashCode();
         }
-
+        
         return hash;
     }
-
-//********************************  toString() ************************************
-//=================================================================================      
+    
+    //********************************  toString() ************************************
+    //=================================================================================      
     @Override
     public String toString() {
         return "quizproject.quizproject.Quiz[ id=" + _id + " ]";
     }
-
+    
 }// end of class

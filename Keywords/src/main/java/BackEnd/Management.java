@@ -52,23 +52,28 @@ import org.mongodb.morphia.query.Query;
  * </ol>
  *
  * @author nikensonmidi
+ * @param <T>
  */
 public abstract class Management implements Serializable {
-
+    
     private java.sql.Connection connection;//static class variables it belongs to all objects of that class
-    private static final String dbUrl = "jdbc:mysql://127.0.0.1:3306/keywords";
-    private static final String dbUsername = "root";
-    private static final String dbPassword = "*******************";
-    private static final String host = "localhost";
-    private static final int port = 27017;
+    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/keywords";
+    private static final String DB_USERNAME = "root";
+    private static final String DB_PASSWORD = "*****************";
+    private static final String HOST = "localhost";
+    private static final int PORT = 27017;
     private static final String DB = "mydata";
     private MongoClient mongo;
     private Morphia morphia;
-    private QuizManager QM;
-    private List<QuizManager> QMs;
-
-//******************************** logNpass ***************************************
-//================================================================================= 
+    
+    
+    
+    
+    
+    
+    
+    //******************************** logNpass ***************************************
+    //=================================================================================
     /**
      * Validate the authenticity of the user in the MSQLDB give him/her access
      * into the program.
@@ -78,39 +83,39 @@ public abstract class Management implements Serializable {
      * @return boolean
      */
     public boolean logNpass(String ulogin, String upass) {
-
+        
         Statement statement;
         boolean isCorrect = false;
         List<String> name;
-
+        
         try {
-
+            
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            connection = DriverManager.getConnection(DB_URL, DB_USERNAME,DB_PASSWORD);
             statement = (Statement) connection.createStatement();
             ResultSet take = statement.executeQuery("call verify('" + ulogin + "', '" + upass + "');");
             name = new ArrayList();
             while (take.next()) {
                 name.add(take.getString("x"));
             }
-
+            
             isCorrect = name.stream()
-                    .anyMatch(e -> e.equalsIgnoreCase("match"));
-
+            .anyMatch(e -> e.equalsIgnoreCase("match"));
+            
             connection.close();
         } catch (SQLException e) {
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Management.class.getName()).log(Level.SEVERE, null, ex);
-             addMessage(null, "DB problem", "cannot log into database" + ex.getMessage());
+            addMessage(null, "DB problem", "cannot log into database" + ex.getMessage());
         }
-
+        
         return isCorrect;
-
-    }//end of logNpass()  
-
-//******************************** createNew **************************************
-//================================================================================= 
+        
+    }//end of logNpass()
+    
+    //******************************** createNew **************************************
+    //=================================================================================
     /**
      * Create a new user and store the info into the MSQLDB. It Creates a new
      * user by calling the MSQL function createUser with these informations the
@@ -122,25 +127,25 @@ public abstract class Management implements Serializable {
      * @param email
      */
     public void createNewUser(String log, String pass, String email) {
-
+        
         String query = "call createUser('" + log + "', '" + pass + "' ,'" + email + "');";
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            connection = DriverManager.getConnection(DB_URL, DB_USERNAME,DB_PASSWORD);
             PreparedStatement preparedStmt = connection.prepareStatement(query);
             preparedStmt.execute();
             connection.close();
         } catch (SQLException e) {
-
+            
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Management.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }//end of createNew()
-
-//******************************** mongoQuery()************************************
-//================================================================================= 
+    
+    //******************************** mongoQuery()************************************
+    //=================================================================================
     /**
      * Return a list of quizzes that belong to the creator.
      *
@@ -148,27 +153,27 @@ public abstract class Management implements Serializable {
      * @return List(Quiz)
      */
     public List<Quiz> mongoQuery(String creator) {
-
+        
         try {
-            mongo = new MongoClient(host, port);
+            mongo = new MongoClient(HOST, PORT);
             Datastore datastore = new Morphia().createDatastore(mongo, DB);
-
+            
             Query query = datastore.createQuery(Quiz.class).field("_id").contains(creator);
-
+            
             List<Quiz> q = query.asList();
             mongo.close();
-
+            
             return q;
-
+            
         } catch (UnknownHostException e) {
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
             return null;
         }
-
+        
     }//end of mongoQuery
-
-//******************************** mongoQuery()************************************
-//================================================================================= 
+    
+    //******************************** mongoQuery()************************************
+    //=================================================================================
     /**
      * Return a list of quizzes that belong to the creator.
      *
@@ -177,24 +182,24 @@ public abstract class Management implements Serializable {
      */
     public Quiz mongoQueryQ(String id) {
         try {
-            mongo = new MongoClient(host, port);
+            mongo = new MongoClient(HOST, PORT);
             Datastore datastore = new Morphia().createDatastore(mongo, DB);
-
+            
             Query query = datastore.createQuery(Quiz.class).field("_id").equal(id);
-
+            
             Quiz q = (Quiz) query.asList().get(0);
             mongo.close();
             return q;
-
+            
         } catch (UnknownHostException e) {
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
             return null;
         }
-
+        
     }//end of mongoQuery
-
-//******************************** mongoStore I ***********************************
-//================================================================================= 
+    
+    //******************************** mongoStore I ***********************************
+    //=================================================================================
     /**
      * Creates a new quiz or updates an existing quiz from mongoDB.<br />
      * _id is the MongoDb id and it is the combination of creator+quiz
@@ -206,35 +211,35 @@ public abstract class Management implements Serializable {
      *
      *
      * @param quiz
-     * @return 
+     * @return
      */
     public String mongoStore(Quiz quiz) {
-
+        
         try {
-
-            mongo = new MongoClient(host, port);
+            
+            mongo = new MongoClient(HOST, PORT);
             morphia = new Morphia();
             morphia.mapPackage("quizproject");//map to the index of the entity
             Datastore datastore = morphia.createDatastore(mongo, DB);
             datastore.ensureIndexes();
-
+            
             datastore.save(quiz);
-
+            
             mongo.close();
             return "success";
-
+            
         } catch (UnknownHostException ex) {
             Logger.getLogger(Quiz.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("there is a problem in mongoStore()");
             addMessage(null, "Error",
-                    "the errror is: " + ex.getMessage());
+                       "the errror is: " + ex.getMessage());
             return ex.getMessage();
-
+            
         }
     }//end of mongoStore
-
-//******************************** addMessage *************************************
-//================================================================================= 
+    
+    //******************************** addMessage *************************************
+    //=================================================================================
     /**
      * The error message to call for client side errors
      *
@@ -245,38 +250,38 @@ public abstract class Management implements Serializable {
     public void addMessage(String component, String summary, String detail) {
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
         FacesContext.getCurrentInstance().addMessage(component, message);
-
-    }// end of addMessage 
-
-//******************************** addMessage *************************************
-//================================================================================= 
+        
+    }// end of addMessage
+    
+    //******************************** addMessage *************************************
+    //=================================================================================
     /**
      * Check mongoDb if the quiz is already in there
      *
      * @param id
-     * @return 
+     * @return
      */
     public boolean checkMongo(String id) {
         boolean isThere;
         try {
-
-            mongo = new MongoClient(host, port);
+            
+            mongo = new MongoClient(HOST, PORT);
             Datastore datastore = new Morphia().createDatastore(mongo, DB);
-
+            
             Query query = datastore.createQuery(Quiz.class).field("_id").equal(id);
-
+            
             List<Quiz> q = query.asList();
             mongo.close();
             isThere = q.parallelStream()
-                    .anyMatch(e -> (e.getId() == null ? id == null : e.getId().equals(id)));
+            .anyMatch(e -> (e.getId() == null ? id == null : e.getId().equals(id)));
             return isThere;
-
+            
         } catch (UnknownHostException e) {
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
             isThere = false;
             return isThere;
         }
-
+        
     }//end of checkMongo
-
+    
 }//end of class
