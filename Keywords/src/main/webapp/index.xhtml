@@ -21,67 +21,62 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
-    
+
     <h:head>
         <title>Keywords</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
     </h:head>
-    
-    
-    
+
+
+
     <h:body>
         <ui:composition template="template.xhtml">
-            
+
             <ui:define name="content-center">
-    			
-           
-                             <h:form>
-                        <p:panel id="panel" header="User Login ">
 
 
-                            <p:messages id="msgs1" />
+                <h:form>
+                    <p:panel id="panel" header="User Login ">
 
-                            <h:panelGrid columns="2" cellpadding="5">
+                        <p:messages id="msgs1" />
 
-                                <p:outputLabel for="login" value="Login:" />
-                                <p:inputText id="login" value="#{VM.user.userLogin}" required="true"  label="Login and #{UV.user}">
+                        <h:panelGrid columns="2" cellpadding="5">
 
-                                </p:inputText>
-
-
-                                <p:outputLabel for="password" value="Password:  "/>
-                                              
-
-                                <p:password id="password" value="#{VM.user.passcode}" />
-
-                            </h:panelGrid>
-
-                            <p:commandButton value="Login" update="panel" action="#{VM.profileLog()}" 
-                                             icon="ui-icon-check" >
+                            <p:outputLabel for="login" value="Login:" />
+                            <p:inputText id="login" value="#{LC.user.userLogin}" required="true"  >
                                 
-                            </p:commandButton>
-                            <p:commandButton value="Reset" update="panel" process="@this" type="reset"   />
+                            </p:inputText>
 
-                            <p:commandButton value="Sign Up" type="button" onclick="PF('dlg1').show();" />
-                            
-                        </p:panel>
 
-                    </h:form>
-                     
+                            <p:outputLabel for="password" value="Password:  "/>
+
+
+                            <p:password id="password" value="#{LC.user.passcode}" />
+
+                        </h:panelGrid>
+
+                        <p:commandButton value="Login" update="panel" action="#{LC.profileLog()}" 
+                                         icon="ui-icon-check" >
+
+                        </p:commandButton>
+                        <p:commandButton value="Reset" update="panel" process="@this" type="reset"   />
+
+                        <p:commandButton value="Sign Up" type="button" onclick="PF('dlg1').show();" />
+                        
+
+
+                    </p:panel>
+
+                </h:form>
+
                 
-    		</ui:define>
+                                        
+            </ui:define>
             
-          
-        </ui:composition>     
-        
-       
-            
-           
-       
-
-
-
+    </ui:composition>     
+      
     </h:body>
+
 
 
 

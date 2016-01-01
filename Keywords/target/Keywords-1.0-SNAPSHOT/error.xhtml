@@ -6,65 +6,30 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
+      
         <title>keywords</title>
+       
     </h:head>
     <h:body>
-      
-     
-        
+
+
+
         <h:form id="example">
-             <p:messages id="msgs1" showDetail="true" autoUpdate="true" closable="true" />
+
             
-             <!--      EXAM CREATION         -->sentence from quiz: #{QM.quiz.sentence}
-                    <p:panel id="panelExam"  ><!--exam_creation head-->
-                        <p:outputPanel id="examOutput">
-                            <!--examTable head-->
-                            <p:dataTable id="examTable" var="exam" value="#{QM.quizs}" editable="true" >
-                               
-                                <p:column>
-                                    <f:facet name="header">
-                                        <h:outputText value="Sentence" />
-                                    </f:facet>
-                                    <p:inplace>
-                                        <p:inputText value="#{exam.sentence}" />
-                                    </p:inplace>
-                                    </p:column>
-                                
-                                
-                                <p:column>
-                                    <f:facet name="header">
-                                        <h:outputText value="Keys" />
-                                    </f:facet>
-                                    <p:inplace>
-                                        <p:inputText value="#{exam.keys}" />
-                                    </p:inplace>
-                                </p:column>
-                            </p:dataTable>
-                            <!--examTable tail-->
-                        </p:outputPanel> 
-                        <p:panelGrid id="examInput" columns="2">
-                            
-                             <h:outputLabel value="Sentence : *" for="sentenceInput"></h:outputLabel>
-                             <p:inputText id="sentenceInput" value="#{QM.quiz.sentence}" required="true"/>
- 
-                             <h:outputLabel  value="Keys : *" for="keyInput"></h:outputLabel>
-            <p:inputText id="keyInput" value="#{QM.quiz.keys}" required="true"/>
-            
-            <p:commandButton id="btn_reset" value="Reset" type="reset"/>
-            <p:commandButton id="btn_add" value="Add" process="examInput"  update="examOutput examInput msgs1 @this" action="#{QM.reinit()}" >
-                <p:collector value="#{QM.quiz}"  addTo="#{QM.quizs}" unique="true" />
-            </p:commandButton>
-                            
-                            
-                            
-                        </p:panelGrid>
-                        
-                        
-                    </p:panel><!--exam_creation tail-->
-            </h:form>
-        
+         
+
+            SUCCESS!!!!
             
             
+            
+            
+            
+            
+        </h:form>
+
+
+
     </h:body>
 </html>
 

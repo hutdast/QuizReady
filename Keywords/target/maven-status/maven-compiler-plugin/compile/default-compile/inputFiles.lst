@@ -1,5 +1,12 @@
-/Volumes/Extra/Projects/java/Keywords/src/main/java/BackEnd/Quiz.java
-/Volumes/Extra/Projects/java/Keywords/src/main/java/BackEnd/Management.java
-/Volumes/Extra/Projects/java/Keywords/src/main/java/BackEnd/KeywordUser.java
-/Volumes/Extra/Projects/java/Keywords/src/main/java/BackEnd/QuizManager.java
-/Volumes/Extra/Projects/java/Keywords/src/main/java/BackEnd/ViewManager.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsModel/KeywordUser.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsModel/Quiz.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsEvent/EastViewController.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsEvent/LoginController.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsEvent/QuizCollectorController.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsModel/AppModels.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsModel/Serviceable.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsOp/AppOps.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsEvent/QuizInfoController.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsModel/DataManagement.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsOp/QuizManager.java
+/Volumes/Extra/Projects/java/Keywords/src/main/java/KeywordsEvent/MenuBarController.java
