@@ -52,7 +52,8 @@
                                                 <ui:insert name="content-east" >
 
                                                     <h:form id="menuForm">
-                                                        <p:commandButton id="dynaButton" value="#{LC.user.userLogin}" type="button" icon="ui-icon-person"/>
+                                       <p:commandButton id="dynaButton" value="#{LC.user.userLogin}" type="button" icon="ui-icon-triangle-1-s
+ "/>
                                                         <!--      MODEL FROM BEAN           -->
                                                         <p:menu model="#{EV.model}" overlay="true" trigger="dynaButton" my="right top" at="right bottom"/>
 
@@ -66,8 +67,8 @@
 
                                         <div class="ui-grid-col-6"><!-- Main layout: For all the contents of the user  -->
                                             <p:layoutUnit position="center" >
-                                                <ui:insert name="menubar" >
-                                                    <div class="ui-grid ui-grid-responsive"><!-- MenuBar Section: not visible unless login  -->
+                                                <ui:insert name="menubar">
+                                                    <div class="ui-grid ui-grid-responsive" ><!-- MenuBar Section: not visible unless login  -->
                                                         <div class="ui-grid-row">
                                                             <div class="ui-grid-col-12">
                                                                 <h:form id="formmenubar">
@@ -175,7 +176,7 @@
                 <h:panelGrid columns="1" cellpadding="2">
 
                     <p:link shape="circle" outcome="quiz_assembler" value="Do you want to go to #{QI.quiz.title}?" >
-                        <f:param name="quizID" value="#{LC.user.userLogin}#{QI.quiz.title}#{QI.quiz.category}" />   
+                          
                     </p:link>            
                 </h:panelGrid>
 

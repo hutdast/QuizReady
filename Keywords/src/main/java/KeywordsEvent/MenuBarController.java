@@ -32,33 +32,34 @@ import org.primefaces.component.menuitem.UIMenuItem;
 public class MenuBarController extends DataManagement
 {
     private Menubar menubar;
-
+    
     public Menubar getMenubar()
     {
         return menubar;
     }
-
-    public void setMenubar(Menubar menubar) 
+    
+    public void setMenubar(Menubar menubar)
     {
         this.menubar = menubar;
     }
-
-   
+    
+    
     
     @PostConstruct
-     public void init()
-     {
-       menubar = new Menubar();   
+    public void init()
+    {
+        menubar = new Menubar();
         UISubmenu sub = new UISubmenu();
-        sub.setLabel("Test");
-       UIMenuItem item = new UIMenuItem();
-                item.setValue("testItemvalue");
-                
-                sub.getChildren().add(item);
-                menubar.getChildren().add(sub);
-    
-         
-     }//end of init()
+        sub.setLabel("Navigation");
+        UIMenuItem item = new UIMenuItem();
+        item.setValue("Dashboard");
+        // setUrl is for outside address setOutcome for internal address
+        item.setOutcome("profile.xhtml");
+        sub.getChildren().add(item);
+        menubar.getChildren().add(sub);
+        
+        
+    }//end of init()
     
     
     
