@@ -1,55 +1,58 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-       
-         <title>keywords - #{LC.user.userLogin}</title>
+        
+        <title>keywords - #{LC.user.userLogin}</title>
         <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>
         <h:outputStylesheet name="css/jsfcrud.css"/>
-        <h:outputStylesheet name="js/jsfcrud.js"/>   
-       
+        <h:outputStylesheet name="js/jsfcrud.js"/>
+        
     </h:head>
     <h:body>
         
         <ui:composition template="template.xhtml"><!--template head-->
             
             
-                        <ui:define name="content-center"> <!--"content-center" head-->
+            <ui:define name="content-center"> <!--"content-center" head-->
                 
                 <h:form id="formassembler">
-
+                    <p:messages id="msgs1" showDetail="true" closable="true"  />
                     
                     <!--      EXAM CREATION         -->
                     <p:panel id="panelExam"><!--exam_creation head-->
-                       
+                        
                         <p:outputPanel id="examOutput">
                             <!--examTable head-->
                             <p:dataTable id="examTable" var="exam" value="#{QC.quizzes}" editable="true"
                                 emptyMessage="You can edit as you create the test"  >
                                 <p:ajax event="rowEdit" listener="#{QC.reinit()}" />
-                                <p:column>
-                                    <f:facet name="header">
-                                        <h:outputText value="Sentence" />
-                                    </f:facet>
+                                <p:column  headerText="Sentence">
+                                    
                                     <p:inplace>
                                         <p:inputText value="#{exam.sentence}"  />
-                                        
                                     </p:inplace>
                                 </p:column>
                                 
                                 
-                                <p:column>
-                                    <f:facet name="header">
-                                        <h:outputText value="Keys" />
-                                    </f:facet>
+                                <p:column headerText="Keys">
+                                    
                                     <p:inplace>
                                         <p:inputText value="#{exam.keys}" />
                                     </p:inplace>
                                 </p:column>
+                                
+                                <p:column headerText="Delete" style="width:32px;text-align: center">
+                                    <p:commandButton update=":formassembler:examOutput" icon="ui-icon-closethick" title="Sure?">
+                                        <p:ajax event="click" listener="#{QC.removeExam(exam)}" />
+                                        
+                                    </p:commandButton>
+                                </p:column>
+                                
                             </p:dataTable>
                             <!--examTable tail-->
                         </p:outputPanel>
@@ -57,19 +60,15 @@
                             
                             <h:outputLabel value="Sentence : *" for="sentenceInput"></h:outputLabel>
                             <p:inputText id="sentenceInput" value="#{QC.quiz.sentence}" required="true">
-                                
                             </p:inputText>
                             
                             <h:outputLabel value="Keys : *" for="keyInput"></h:outputLabel>
                             <p:inputText id="keyInput" value="#{QC.quiz.keys}" required="true">
-                                
                             </p:inputText>
                             
                             <p:commandButton id="btn_reset" value="Reset" type="reset"/>
                             <p:commandButton id="btn_add" value="Add"   update="examOutput examInput msgs1 @this" action="#{QC.reinit()}" >
                                 <p:collector value="#{QC.quiz}"  addTo="#{QC.quizzes}" unique="true" />
-                                
-                                
                             </p:commandButton>
                             
                             
@@ -80,16 +79,16 @@
                     </p:panel><!--exam_creation tail-->
                     
                 </h:form>
-    
+                
             </ui:define> <!--"content-center" tail-->
-       
+            
         </ui:composition><!--template tail-->
         
         
         
         
         
-       
+        
         
         
     </h:body>
