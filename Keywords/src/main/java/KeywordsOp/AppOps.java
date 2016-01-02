@@ -27,8 +27,8 @@ import KeywordsModel.Serviceable;
 public final class AppOps 
 {
     public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/keywords";
-    public static final String DB_USERNAME = "root";
-    public static final String DB_PASSWORD = "nikeman12";
+    public static final String DB_USERNAME = "*********";
+    public static final String DB_PASSWORD = "**********";
     public static final String HOST = "localhost";
     public static final int PORT = 27017;
     public static final String DB = "mydata";
