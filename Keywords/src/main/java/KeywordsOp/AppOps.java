@@ -24,16 +24,16 @@ import KeywordsModel.Serviceable;
  *
  * @author mayhem
  */
-public final class AppOps 
+public final class AppOps
 {
     public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/keywords";
-    public static final String DB_USERNAME = "*********";
-    public static final String DB_PASSWORD = "**********";
+    public static final String DB_USERNAME = "********";
+    public static final String DB_PASSWORD = "******y*";
     public static final String HOST = "localhost";
     public static final int PORT = 27017;
     public static final String DB = "mydata";
-  //******************************** formatTitle(String title) **********************
- //=================================================================================
+    //******************************** formatTitle(String title) **********************
+    //=================================================================================
     /**
      * Format the title of the quiz before it can be joined with author name to
      * form the id. Take away the space That is inside the string and replace
@@ -57,16 +57,16 @@ public final class AppOps
         
         return String.valueOf(temp);
         
-    }    
+    }
     
- //******************************** getModel(AppModels type) **********************
- //=================================================================================
+    //******************************** getModel(AppModels type) **********************
+    //=================================================================================
     /**
      * Return a specific entity object Quiz or KeywordUser
-     * 
+     *
      * @param type
      * @return String
-     */    
+     */
     public static Serviceable getModel(AppModels type)
     {
         Serviceable tempObj;
@@ -75,17 +75,43 @@ public final class AppOps
                 tempObj = new KeywordUser();
                 break;
             case QUIZ:
-               tempObj = new Quiz();
+                tempObj = new Quiz();
                 
                 break;
             default:
                 tempObj = null;
-                break;            
+                break;
         }
         
         return tempObj;
     }//end of getModel
     
+    public static String verifyEntry(String sentence, String keys){
+        String isVerified = "success";
+        String delimeter = "\\s|,|\\.";
+        String[] splitSentence = sentence.split(" ");
+        
+        for (String key : keys.split(delimeter))
+        {
+            for(String element : splitSentence)
+            {
+                if(!element.equals( key.trim() ))
+                {
+                    isVerified =  " The key " + key + " doesn't match any word in the corresponding sentence";
+                    return isVerified ;
+                }
+            }
+            if (sentence.equals("") || key.equals(""))
+            {
+                isVerified =  "Sentence and keys cannot be left empty";
+                return isVerified ;
+            }
+        }
+        
+        System.out.println("verified is about leave and isverified is..: "+isVerified);
+        
+        return isVerified;
+    }
     
     
 }//end of AppOps

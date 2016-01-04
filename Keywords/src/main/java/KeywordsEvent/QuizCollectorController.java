@@ -32,143 +32,126 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
 
 @ManagedBean(name = "QC")
 @SessionScoped
-public class QuizCollectorController extends DataManagement
-{
+public class QuizCollectorController extends DataManagement {
     
     private Serviceable quiz;
     private List<Quiz> quizzes;
     @ManagedProperty(value = "#{QI}")
     private QuizInfoController infoBean;
-    private String quizID;
+    private Quiz dbQuiz;
     
     @PostConstruct
-    public void init()
-    {
+    public void init() {
+        infoBean.setShowDialog("false");
+        String id = infoBean.getQuiz().getId();
+        setDbQuiz(mongoQueryQ(id));
         quiz = AppOps.getModel(AppModels.QUIZ);
-        infoBean.getQuiz().setBundle(new HashMap<>());//Initialize the infobean quiz table
-        if(infoBean.isExistingQuiz() == true)
-        {
+        
+        if (infoBean.isExistingQuiz() == true) {
             getExistingQuiz();
-        }else
-        {
-            quizzes =  new ArrayList<>();
+        } else {
+            
+            dbQuiz.setBundle(new HashMap<>());
+            quizzes = new ArrayList<>();
         }
         
     }
     
-    public String reinit()
-    {
+    public String reinit() {
         screenForDB(quiz.getSentence(), quiz.getKeys());
         quiz = AppOps.getModel(AppModels.QUIZ);
         return null;
     }
     
-    public List<Quiz> getQuizzes()
-    {
+    public List<Quiz> getQuizzes() {
         return quizzes;
     }
     
-    public void setQuizzes(List<Quiz> quizzes)
-    {
+    public void setQuizzes(List<Quiz> quizzes) {
         this.quizzes = quizzes;
     }
     
-    public Serviceable getQuiz()
-    {
+    public Serviceable getQuiz() {
         return quiz;
     }
     
-    public void setQuiz(Serviceable quiz)
-    {
+    public void setQuiz(Serviceable quiz) {
         this.quiz = quiz;
     }
     
-    public QuizInfoController getInfoBean()
-    {
+    public QuizInfoController getInfoBean() {
         return infoBean;
     }
     
-    public void setInfoBean(QuizInfoController infoBean)
-    {
+    public void setInfoBean(QuizInfoController infoBean) {
         this.infoBean = infoBean;
     }
     
-    public String getQuizID()
-    {
-        return quizID;
+    
+    public Quiz getDbQuiz() {
+        return dbQuiz;
     }
     
-    public void setQuizID(String quizID)
-    {
-        this.quizID = quizID;
+    public void setDbQuiz(Quiz dbQuiz) {
+        this.dbQuiz = dbQuiz;
     }
     
     //****************** screenForDB(String sentence, String keys)  *********************
     //=================================================================================
     /**
-     * screenForDB(String sentence, String keys)  Save the question set before
-     * it enters the mongoDB and alert user about empty fields and requirement
+     * screenForDB(String sentence, String keys) Save the question set before it
+     * enters the mongoDB and alert user about empty fields and requirement
      * violations.
      *
      * @param sentence
      * @param keys
      */
-    private void screenForDB(String sentence, String keys)
-    {
-        String delimeter = "\\s|,|\\.";
-        for (String key : keys.split(delimeter))
-        {
-            
-            if (!sentence.contains(key.trim()))
-            {
-                
-                addMessage("msgs1", " The key " + key + " doesn't match any word in the corresponding sentence",
-                           "Not saved!");
-                return;
-            } else if (sentence.equals("") || key.equals(""))
-            {
-                addMessage("msgs1", "Sentence and keys cannot be left empty",
-                           "Not saved!");
-                return;//prevent empty entries into the database
-                
-            } else
-            {
-                
-                infoBean.getQuiz().getBundle().put(sentence, keys);
-                mongoStore((Quiz) infoBean.getQuiz());
-            }
-        }//end for loop String key
+    private void screenForDB(String sentence, String keys) {
+        String errMsg = AppOps.verifyEntry(sentence, keys);
+        if(!errMsg.equals("success")){
+            addMessage("msgs1", errMsg,
+                       "Not saved!");
+        }else{
+            dbQuiz.getBundle().put(sentence, keys);
+            mongoStore(dbQuiz);
+        }
         
     }
+    
     //****************** getExistingQuiz() ********************************************
     //=================================================================================
     /**
-     * getExistingQuiz() captures the bundle from the quiz that is in the database
-     * (if one is found from infobean) then disassembles it into several quiz objects.
+     * getExistingQuiz() captures the bundle from the quiz that is in the
+     * database (if one is found from infobean) then disassembles it into
+     * several quiz objects.
      *
      */
-    private void getExistingQuiz()
-    {
-        String id = infoBean.getQuiz().getId();
-        if(mongoQueryQ(id).getBundle().isEmpty())
-        {
-            System.out.print(" ... ");
-            return;
-        }  else
-        {
-            quizzes = mongoQueryQ(id).getBundle().entrySet().stream()
-            .map(e ->
-                 {
-                     return new Quiz(quiz.getId(),e.getKey(), e.getValue());
+    private void getExistingQuiz() {
+        System.out.print("getExistingQuiz() is invoked!... ");
+        
+        
+        /**
+         * The user might be interrupted or did not finish creating the test
+         * from last session so the db would be empty therefore bundle would be
+         * null if bundle is null then it should be initiated in order to put
+         * element in it when screenForDB() is called.
+         */
+        if (dbQuiz.getBundle() == null) {
+            System.out.print("There is no bundle ... ");
+            dbQuiz.setBundle(new HashMap<>());
+            
+            quizzes = new ArrayList<>();
+        } else {
+            quizzes = dbQuiz.getBundle().entrySet().stream()
+            .map(e
+                 -> {
+                     return new Quiz(quiz.getId(), e.getKey(), e.getValue());
                  })
             .collect(Collectors.toList());
         }
-        
-        
         
     }
     
@@ -180,23 +163,16 @@ public class QuizCollectorController extends DataManagement
      *
      * @param q
      */
-    
-    public void removeExam(Quiz q)
-    {
+    public void removeExam(Quiz q) {
         
-        System.out.print("removeExam() is ivoked, and the new list is..:");
-        quizzes =   quizzes.stream()
+        System.out.print("removeExam() is ivoked, and the new list from dbQuiz..:" + dbQuiz.getBundle());
+        quizzes = quizzes.stream()
         .filter(e -> !(e.getSentence().equals(q.getSentence())))
         .collect(Collectors.toList());
-        infoBean.getQuiz().getBundle().remove(q.getSentence(), q.getKeys());
-        mongoStore((Quiz) infoBean.getQuiz());
-        
-        
-        
+        dbQuiz.getBundle().remove(q.getSentence(), q.getKeys());
+        mongoStore(dbQuiz);
         
     }
-    
-    
     
     
     
