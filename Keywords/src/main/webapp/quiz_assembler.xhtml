@@ -28,21 +28,27 @@
                         
                         <p:outputPanel id="examOutput">
                             <!--examTable head-->
-                            <p:dataTable id="examTable" var="exam" value="#{QC.quizzes}" editable="true"
+                            <p:dataTable id="examTable" var="exam" value="#{QC.quizzes}"
                                 emptyMessage="You can edit as you create the test"  >
-                                <p:ajax event="rowEdit" listener="#{QC.reinit()}" />
+                                <p:ajax event="cellEdit" listener="#{QC.reinit()}" />
+                                
                                 <p:column  headerText="Sentence">
-                                    
-                                    <p:inplace>
-                                        <p:inputText value="#{exam.sentence}"  />
+                                    <p:inplace editor="true">
+                                        <p:inputTextarea    rows="6" cols="95" value="#{exam.sentence}" required="true"  >
+                                            <p:ajax event="blur" listener="#{QC.updateRow(exam.keys, exam.sentence)}" />
+                                            <p:ajax event="keyup" listener="#{QC.onClick(exam.sentence)}" />
+                                        </p:inputTextarea>
                                     </p:inplace>
                                 </p:column>
                                 
                                 
-                                <p:column headerText="Keys">
-                                    
-                                    <p:inplace>
-                                        <p:inputText value="#{exam.keys}" />
+                                
+                                <p:column headerText="Keys" >
+                                    <p:inplace editor="true">
+                                        
+                                        <p:inputTextarea  rows="6" cols="95" value="#{exam.keys}" required="true">
+                                            <p:ajax event="blur" listener="#{QC.updateRow(exam.keys, exam.sentence)}" />
+                                        </p:inputTextarea>
                                     </p:inplace>
                                 </p:column>
                                 
@@ -56,20 +62,21 @@
                             </p:dataTable>
                             <!--examTable tail-->
                         </p:outputPanel>
-                        <p:panelGrid id="examInput" columns="2">
+                        <p:panelGrid id="examInput" columns="4">
                             
-                            <h:outputLabel value="Sentence : *" for="sentenceInput"></h:outputLabel>
-                            <p:inputText id="sentenceInput" value="#{QC.quiz.sentence}" required="true">
-                            </p:inputText>
+                            <h:outputLabel value="Sentence : *" for="sentenceInput">  </h:outputLabel>
+                            <p:inputTextarea id="sentenceInput" rows="6" cols="95" value="#{QC.quiz.sentence}" required="true" />
                             
                             <h:outputLabel value="Keys : *" for="keyInput"></h:outputLabel>
-                            <p:inputText id="keyInput" value="#{QC.quiz.keys}" required="true">
-                            </p:inputText>
+                            
+                            <p:inputTextarea id="keyInput" value="#{QC.quiz.keys}" required="true" rows="6" cols="95"/>
+                            
                             
                             <p:commandButton id="btn_reset" value="Reset" type="reset"/>
                             <p:commandButton id="btn_add" value="Add"   update="examOutput examInput msgs1 @this" action="#{QC.reinit()}" >
-                                <p:collector value="#{QC.quiz}"  addTo="#{QC.quizzes}" unique="true" />
+                                <p:collector value="#{QC.quiz}"  addTo="#{QC.quizzes}" unique="true" />        
                             </p:commandButton>
+                            
                             
                             
                             

@@ -63,6 +63,7 @@ public class QuizCollectorController extends DataManagement {
     public String reinit() {
         screenForDB(quiz.getSentence(), quiz.getKeys());
         quiz = AppOps.getModel(AppModels.QUIZ);
+        
         return null;
     }
     
@@ -130,9 +131,6 @@ public class QuizCollectorController extends DataManagement {
      *
      */
     private void getExistingQuiz() {
-        System.out.print("getExistingQuiz() is invoked!... ");
-        
-        
         /**
          * The user might be interrupted or did not finish creating the test
          * from last session so the db would be empty therefore bundle would be
@@ -140,9 +138,7 @@ public class QuizCollectorController extends DataManagement {
          * element in it when screenForDB() is called.
          */
         if (dbQuiz.getBundle() == null) {
-            System.out.print("There is no bundle ... ");
             dbQuiz.setBundle(new HashMap<>());
-            
             quizzes = new ArrayList<>();
         } else {
             quizzes = dbQuiz.getBundle().entrySet().stream()
@@ -158,22 +154,28 @@ public class QuizCollectorController extends DataManagement {
     //****************** removeExam(Quiz q) *******************************************
     //=================================================================================
     /**
-     * prepBundle(String sentence, String keys) prepare the question set before
+     * prepBundle(String sentence, String keys) prepares the question set before
      * it enters the mongoDB.
      *
      * @param q
      */
     public void removeExam(Quiz q) {
-        
-        System.out.print("removeExam() is ivoked, and the new list from dbQuiz..:" + dbQuiz.getBundle());
         quizzes = quizzes.stream()
         .filter(e -> !(e.getSentence().equals(q.getSentence())))
         .collect(Collectors.toList());
         dbQuiz.getBundle().remove(q.getSentence(), q.getKeys());
         mongoStore(dbQuiz);
         
+    }//end of removeExam(Quiz q)
+    
+    public void updateRow(String key, String sentence){
+        screenForDB(sentence, key);
+        
     }
     
-    
+    public void onClick(String sentence){
+        
+        dbQuiz.getBundle().remove(sentence);
+    }
     
 }//end of QuizCollectorEvent
