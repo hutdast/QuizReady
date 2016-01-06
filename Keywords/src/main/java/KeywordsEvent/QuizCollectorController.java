@@ -47,7 +47,7 @@ public class QuizCollectorController extends DataManagement {
     public void init() {
         infoBean.setShowDialog("false");
         String id = infoBean.getQuiz().getId();
-        setDbQuiz(mongoQueryQ(id));
+        setDbQuiz( (Quiz)mongoOps(id, "quiz", null) );
         quiz = AppOps.getModel(AppModels.QUIZ);
         
         if (infoBean.isExistingQuiz() == true) {
@@ -117,7 +117,8 @@ public class QuizCollectorController extends DataManagement {
                        "Not saved!");
         }else{
             dbQuiz.getBundle().put(sentence, keys);
-            mongoStore(dbQuiz);
+            mongoOps(null, "save", dbQuiz);
+            
         }
         
     }
@@ -164,7 +165,7 @@ public class QuizCollectorController extends DataManagement {
         .filter(e -> !(e.getSentence().equals(q.getSentence())))
         .collect(Collectors.toList());
         dbQuiz.getBundle().remove(q.getSentence(), q.getKeys());
-        mongoStore(dbQuiz);
+        mongoOps(null, "save", dbQuiz);
         
     }//end of removeExam(Quiz q)
     

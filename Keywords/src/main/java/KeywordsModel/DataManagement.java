@@ -60,8 +60,8 @@ public class DataManagement implements Serializable
 {
     
     
-    private MongoClient mongo;
-    private Morphia morphia;
+    private  static MongoClient mongo;
+    private  Morphia morphia;
     private java.sql.Connection connection;
     
     
@@ -77,7 +77,7 @@ public class DataManagement implements Serializable
      * @param upass
      * @return boolean
      */
-    public boolean logNpass(String ulogin, String upass)
+    protected boolean logNpass(String ulogin, String upass)
     {
         
         Statement statement;
@@ -123,7 +123,7 @@ public class DataManagement implements Serializable
      * @param pass
      * @param email
      */
-    public void createNewUser(String log, String pass, String email)
+    protected void createNewUser(String log, String pass, String email)
     {
         
         String query = "call createUser('" + log + "', '" + pass + "' ,'" + email + "');";
@@ -143,109 +143,6 @@ public class DataManagement implements Serializable
         
     }//end of createNew()
     
-    //******************************** mongoQuery()************************************
-    //=================================================================================
-    /**
-     * Return a list of quizzes that belong to the creator.
-     *
-     * @param creator
-     * @return List(Quiz)
-     */
-    public List<Quiz> mongoQuery(String author)
-    {
-        
-        try {
-            mongo = MongoHelper.getInstance();
-            morphia = new Morphia();
-            morphia.mapPackage("quizproject");//map to the index of the entity
-            Datastore datastore = morphia.createDatastore(mongo, AppOps.DB);
-            
-            Query query = datastore.createQuery(Quiz.class).field("userLogin").equal(author);
-            
-            List<Quiz> q = query.asList();
-            mongo.close();
-            
-            return q;
-            
-        } catch (UnknownHostException e)
-        {
-            addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
-            return null;
-        }
-        
-    }//end of mongoQuery
-    
-    //******************************** mongoQuery()************************************
-    //=================================================================================
-    /**
-     * Return a list of quizzes that belong to the creator.
-     *
-     * @param id
-     * @return List(QuizManager)
-     */
-    public Quiz mongoQueryQ(String id)
-    {
-        try {
-            mongo = MongoHelper.getInstance();
-            morphia = new Morphia();
-            morphia.mapPackage("quizproject");//map to the index of the entity
-            Datastore datastore = morphia.createDatastore(mongo, AppOps.DB);
-            
-            Query query = datastore.createQuery(Quiz.class).field("_id").equal(id);
-            
-            Quiz q = (Quiz) query.asList().get(0);
-            mongo.close();
-            return q;
-            
-        } catch (UnknownHostException e)
-        {
-            addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
-            return null;
-        }
-        
-    }//end of mongoQuery
-    
-    //******************************** mongoStore I ***********************************
-    //=================================================================================
-    /**
-     * Creates a new quiz or updates an existing quiz from mongoDB.<br />
-     * _id is the MongoDb id and it is the combination of creator+quiz
-     * title.<br />
-     * The <b>option</b> can be <b>new</b> or <b>update</b>. The <b>new</b> sets
-     * a new id, the creator name and the quiz object. The <b>update</b>
-     * retrieves the quiz object, saves it then deletes the query. The newly
-     * saved item is then updated and stored back into mongoDB.
-     *
-     *
-     * @param quiz
-     * @return
-     */
-    public String mongoStore(Quiz quiz)
-    {
-        
-        try {
-            
-            mongo = MongoHelper.getInstance();
-            morphia = new Morphia();
-            morphia.mapPackage("quizproject");//map to the index of the entity
-            Datastore datastore = morphia.createDatastore(mongo, AppOps.DB);
-            datastore.ensureIndexes();
-            
-            datastore.save(quiz);
-            
-            mongo.close();
-            return "success";
-            
-        } catch (UnknownHostException ex)
-        {
-            Logger.getLogger(Quiz.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("there is a problem in mongoStore()");
-            addMessage(null, "Error",
-                       "the errror is: " + ex.getMessage());
-            return ex.getMessage();
-            
-        }
-    }//end of mongoStore
     
     //******************************** addMessage *************************************
     //=================================================================================
@@ -256,48 +153,58 @@ public class DataManagement implements Serializable
      * @param summary
      * @param detail
      */
-    public void addMessage(String component, String summary, String detail)
+    protected void addMessage(String component, String summary, String detail)
     {
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
         FacesContext.getCurrentInstance().addMessage(component, message);
         
     }// end of addMessage
     
-    //******************************** addMessage *************************************
+    //******************************** mongoOps()************************************
     //=================================================================================
     /**
-     * Check mongoDb if the quiz is already in there
+     * Module in charge of all Mongo db operations, in this way there is one instance
+     * of MongoClient is created.
      *
-     * @param id
-     * @return
+     * @param searchKey
+     * @param option
+     * @param quiz
+     * @return List(QuizManager)
      */
-    public boolean checkMongo(String id)
+    protected  Object mongoOps(String searchKey, String option, Quiz quiz)
     {
-        boolean isThere;
+        Object result = null;
         try {
-            
             mongo = new MongoClient(AppOps.HOST, AppOps.PORT);
             morphia = new Morphia();
             morphia.mapPackage("quizproject");//map to the index of the entity
             Datastore datastore = morphia.createDatastore(mongo, AppOps.DB);
-            
-            Query query = datastore.createQuery(Quiz.class).field("_id").equal(id);
-            
-            List<Quiz> q = query.asList();
-            
-            isThere = q.parallelStream()
-            .anyMatch(e -> (e.getId() == null ? id == null : e.getId().equals(id)));
+            Query query;
+            switch(option){
+                case "quiz":
+                    query = datastore.createQuery(Quiz.class).field("_id").equal(searchKey);
+                    result = (Quiz) query.asList().get(0);
+                    break;
+                case "quizzes":
+                    query = datastore.createQuery(Quiz.class).field("userLogin").equal(searchKey);
+                    result = query.asList();
+                    break;
+                case "save":
+                    datastore.ensureIndexes();
+                    datastore.save(quiz);
+                    result = "success";
+            }
             mongo.close();
-            return isThere;
+            return result;
             
         } catch (UnknownHostException e)
         {
+            Logger.getLogger(Quiz.class.getName()).log(Level.SEVERE, null, e);
             addMessage(null, "DB problem", "cannot log into database" + e.getMessage());
-            isThere = false;
-            return isThere;
+            return null;
         }
         
-    }//end of checkMongo
+    }//end of mongoQuery
     
     
     
