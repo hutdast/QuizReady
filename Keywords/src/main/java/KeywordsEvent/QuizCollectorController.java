@@ -32,6 +32,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 @ManagedBean(name = "QC")
 @SessionScoped
@@ -41,19 +42,20 @@ public class QuizCollectorController extends DataManagement {
     private List<Quiz> quizzes;
     @ManagedProperty(value = "#{QI}")
     private QuizInfoController infoBean;
+    @ManagedProperty(value = "#{TD}")
+    private TreeDisplayController TD;
     private Quiz dbQuiz;
     
     @PostConstruct
     public void init() {
         infoBean.setShowDialog("false");
-        String id = infoBean.getQuiz().getId();
-        setDbQuiz( (Quiz)mongoOps(id, "quiz", null) );
         quiz = AppOps.getModel(AppModels.QUIZ);
-        
-        if (infoBean.isExistingQuiz() == true) {
-            getExistingQuiz();
+        String id = (TD.getCrossedOver() != null)?TD.getCrossedOver():infoBean.getQuiz().getId();
+        if (TD.getCrossedOver() != null || infoBean.isExistingQuiz() == true) {
+            getExistingQuiz(id);
+            TD.setCrossedOver(null);
+            infoBean.setExistingQuiz(false);
         } else {
-            
             dbQuiz.setBundle(new HashMap<>());
             quizzes = new ArrayList<>();
         }
@@ -91,13 +93,20 @@ public class QuizCollectorController extends DataManagement {
         this.infoBean = infoBean;
     }
     
-    
     public Quiz getDbQuiz() {
         return dbQuiz;
     }
     
     public void setDbQuiz(Quiz dbQuiz) {
         this.dbQuiz = dbQuiz;
+    }
+    
+    public TreeDisplayController getTD() {
+        return TD;
+    }
+    
+    public void setTD(TreeDisplayController TD) {
+        this.TD = TD;
     }
     
     //****************** screenForDB(String sentence, String keys)  *********************
@@ -112,10 +121,11 @@ public class QuizCollectorController extends DataManagement {
      */
     private void screenForDB(String sentence, String keys) {
         String errMsg = AppOps.verifyEntry(sentence, keys);
-        if(!errMsg.equals("success")){
+        if (!errMsg.equals("success")) {
             addMessage("msgs1", errMsg,
                        "Not saved!");
-        }else{
+            
+        } else {
             dbQuiz.getBundle().put(sentence, keys);
             mongoOps(null, "save", dbQuiz);
             
@@ -131,23 +141,20 @@ public class QuizCollectorController extends DataManagement {
      * several quiz objects.
      *
      */
-    private void getExistingQuiz() {
+    private void getExistingQuiz(String id) {
         /**
          * The user might be interrupted or did not finish creating the test
          * from last session so the db would be empty therefore bundle would be
          * null if bundle is null then it should be initiated in order to put
          * element in it when screenForDB() is called.
          */
+        setDbQuiz((Quiz) mongoOps(id, "quiz", null));
+        
         if (dbQuiz.getBundle() == null) {
             dbQuiz.setBundle(new HashMap<>());
             quizzes = new ArrayList<>();
         } else {
-            quizzes = dbQuiz.getBundle().entrySet().stream()
-            .map(e
-                 -> {
-                     return new Quiz(quiz.getId(), e.getKey(), e.getValue());
-                 })
-            .collect(Collectors.toList());
+            quizzes = transformQToList();
         }
         
     }
@@ -160,23 +167,34 @@ public class QuizCollectorController extends DataManagement {
      *
      * @param q
      */
-    public void removeExam(Quiz q) {
-        quizzes = quizzes.stream()
-        .filter(e -> !(e.getSentence().equals(q.getSentence())))
-        .collect(Collectors.toList());
+    public void removeQuestion(Quiz q) {
         dbQuiz.getBundle().remove(q.getSentence(), q.getKeys());
         mongoOps(null, "save", dbQuiz);
-        
+        System.out.println(" the remove sentence..:"+q.getSentence()+" the remove key..:"+q.getKeys());
+        quizzes.removeIf(e -> e.getSentence().equals(q.getSentence()));
     }//end of removeExam(Quiz q)
     
-    public void updateRow(String key, String sentence){
+    //screenForDB needs to remain private to avoid client side interaction with db.
+    public void updateRow(String key, String sentence) {
         screenForDB(sentence, key);
         
     }
     
-    public void onClick(String sentence){
-        
+    public void onClick(String sentence) {
         dbQuiz.getBundle().remove(sentence);
+    }
+    
+    private List<Quiz> transformQToList(){
+        return  dbQuiz.getBundle().entrySet().stream()
+        .map(e
+             -> {
+                 return new Quiz(quiz.getId(), e.getKey(), e.getValue());
+             })
+        .collect(Collectors.toList());
+    }
+    
+    public void removeTest(String test){
+        System.out.println("the test from QC..:"+test);
     }
     
 }//end of QuizCollectorEvent

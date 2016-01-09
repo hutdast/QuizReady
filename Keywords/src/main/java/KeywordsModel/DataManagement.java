@@ -183,7 +183,7 @@ public class DataManagement implements Serializable
             switch(option){
                 case "quiz":
                     query = datastore.createQuery(Quiz.class).field("_id").equal(searchKey);
-                    result = (Quiz) query.asList().get(0);
+                    result = (Quiz) query.get();
                     break;
                 case "quizzes":
                     query = datastore.createQuery(Quiz.class).field("userLogin").equal(searchKey);

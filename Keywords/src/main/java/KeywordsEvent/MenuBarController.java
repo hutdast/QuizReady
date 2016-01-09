@@ -16,10 +16,11 @@
 package KeywordsEvent;
 
 import KeywordsModel.DataManagement;
+import KeywordsModel.Quiz;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.component.submenu.UISubmenu;
 import org.primefaces.component.menubar.Menubar;
 import org.primefaces.component.menuitem.UIMenuItem;
@@ -32,7 +33,10 @@ import org.primefaces.component.menuitem.UIMenuItem;
 public class MenuBarController extends DataManagement
 {
     private Menubar menubar;
-    
+    @ManagedProperty(value = "#{QI}")
+    private QuizInfoController infoBean;
+    @ManagedProperty(value = "#{TD}")
+    private TreeDisplayController TD;
     public Menubar getMenubar()
     {
         return menubar;
@@ -42,6 +46,23 @@ public class MenuBarController extends DataManagement
     {
         this.menubar = menubar;
     }
+    
+    public QuizInfoController getInfoBean() {
+        return infoBean;
+    }
+    
+    public void setInfoBean(QuizInfoController infoBean) {
+        this.infoBean = infoBean;
+    }
+    
+    public TreeDisplayController getTD() {
+        return TD;
+    }
+    
+    public void setTD(TreeDisplayController TD) {
+        this.TD = TD;
+    }
+    
     
     
     
@@ -57,6 +78,18 @@ public class MenuBarController extends DataManagement
         item.setOutcome("profile.xhtml");
         sub.getChildren().add(item);
         menubar.getChildren().add(sub);
+        if(infoBean.isExistingQuiz() == true || TD.getCrossedOver() != null){
+            sub = new UISubmenu();
+            String label = (infoBean.getQuiz().getTitle() != null)?
+            infoBean.getQuiz().getTitle():((Quiz) mongoOps(TD.getCrossedOver(), "quiz", null)).getTitle();
+            sub.setLabel(label);
+            item = new UIMenuItem();
+            item.setValue("Delete");
+            
+            sub.getChildren().add(item);
+            menubar.getChildren().add(sub);
+            
+        }
         
         
     }//end of init()
